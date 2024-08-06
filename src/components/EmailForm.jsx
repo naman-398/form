@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import emailjs from 'emailjs-com';
 import QR from "../assets/images/webp/qr1.png";
+import InputField from './common/InputField';
+
 const phoneModelColors = {
   'iphone x': ['Space Gray', 'Silver'],
   'iphone xr': ['Black', 'White', 'Blue', 'Yellow', 'Red'],
@@ -53,6 +55,18 @@ const phoneModelStorage = {
   'iphone 15 pro max': ['128GB', '256GB', '512GB', '1TB'],
 };
 
+const getCityAndState = async (pincode) => {
+  try {
+    const response = await fetch(`https://api.example.com/location/${pincode}`);
+    if (!response.ok) throw new Error('Failed to fetch location data');
+    const data = await response.json();
+    return { city: data.city, state: data.state };
+  } catch (error) {
+    console.error(error);
+    return { city: '', state: '' };
+  }
+};
+
 const EmailForm = () => {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -83,6 +97,18 @@ const EmailForm = () => {
     }
     setFormData((prevData) => ({ ...prevData, phoneColor: '', phoneStorage: '' }));
   }, [formData.phoneModel]);
+
+  useEffect(() => {
+    if (formData.pincode.length === 6) {
+      getCityAndState(formData.pincode).then(({ city, state }) => {
+        setFormData((prevData) => ({
+          ...prevData,
+          city,
+          state,
+        }));
+      });
+    }
+  }, [formData.pincode]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -115,7 +141,6 @@ const EmailForm = () => {
         }
       );
 
-    // Reset form data
     e.target.reset();
     setFormData({
       firstName: '',
@@ -135,149 +160,101 @@ const EmailForm = () => {
   return (
     <div className="max-w-md mx-auto p-4">
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Form fields */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">First Name</label>
-          <input
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Last Name</label>
-          <input
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Pincode</label>
-          <input
-            type="text"
-            name="pincode"
-            value={formData.pincode}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">City</label>
-          <input
-            type="text"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">State</label>
-          <input
-            type="text"
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Phone Model</label>
-          <select
-            name="phoneModel"
-            value={formData.phoneModel}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          >
-            <option value="">Select Model</option>
-            {Object.keys(phoneModelColors).map((model) => (
-              <option key={model} value={model}>
-                {model}
-              </option>
-            ))}
-          </select>
-        </div>
+        <InputField
+          type="text"
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+          label="First Name"
+          required
+        />
+        <InputField
+          type="text"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+          label="Last Name"
+          required
+        />
+        <InputField
+          type="text"
+          name="pincode"
+          value={formData.pincode}
+          onChange={handleChange}
+          label="Pincode"
+          required
+        />
+        <InputField
+          type="text"
+          name="city"
+          value={formData.city}
+          onChange={handleChange}
+          label="City"
+          required
+        />
+        <InputField
+          type="text"
+          name="state"
+          value={formData.state}
+          onChange={handleChange}
+          label="State"
+          required
+        />
+        <InputField
+          type="select"
+          name="phoneModel"
+          value={formData.phoneModel}
+          onChange={handleChange}
+          label="Phone Model"
+          options={Object.keys(phoneModelColors)}
+          required
+        />
         {formData.phoneModel && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Phone Color</label>
-            <select
-              name="phoneColor"
-              value={formData.phoneColor}
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option value="">Select Color</option>
-              {availableColors.map((color) => (
-                <option key={color} value={color}>
-                  {color}
-                </option>
-              ))}
-            </select>
-          </div>
+          <InputField
+            type="select"
+            name="phoneColor"
+            value={formData.phoneColor}
+            onChange={handleChange}
+            label="Phone Color"
+            options={availableColors}
+            required
+          />
         )}
         {formData.phoneModel && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Phone Storage</label>
-            <select
-              name="phoneStorage"
-              value={formData.phoneStorage}
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option value="">Select Storage</option>
-              {availableStorage.map((storage) => (
-                <option key={storage} value={storage}>
-                  {storage}
-                </option>
-              ))}
-            </select>
-          </div>
+          <InputField
+            type="select"
+            name="phoneStorage"
+            value={formData.phoneStorage}
+            onChange={handleChange}
+            label="Phone Storage"
+            options={availableStorage}
+            required
+          />
         )}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Full Address</label>
-          <textarea
-            name="fullAddress"
-            value={formData.fullAddress}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Mobile No</label>
-          <input
-            type="text"
-            name="mobileNo"
-            value={formData.mobileNo}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Alternate Mobile No</label>
-          <input
-            type="text"
-            name="alternateNo"
-            value={formData.alternateNo}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
+        <InputField
+          type="textarea"
+          name="fullAddress"
+          value={formData.fullAddress}
+          onChange={handleChange}
+          label="Full Address"
+          required
+        />
+        <InputField
+          type="text"
+          name="mobileNo"
+          value={formData.mobileNo}
+          onChange={handleChange}
+          label="Mobile No"
+          required
+        />
+        <InputField
+          type="text"
+          name="alternateNo"
+          value={formData.alternateNo}
+          onChange={handleChange}
+          label="Alternate Mobile No"
+          required
+        />
         {error && (
           <div className="text-red-500 text-sm">
             {error}
