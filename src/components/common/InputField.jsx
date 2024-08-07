@@ -6,30 +6,22 @@ const InputField = ({
   value,
   onChange,
   label,
+  placeholder,
   required = false,
   textarea = false,
   options = [],
 }) => {
   return (
     <>
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
-      {textarea ? (
-        <textarea
-          name={name}
-          value={value}
-          onChange={onChange}
-          required={required}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm !outline-none sm:text-sm"
-        />
-      ) : type === 'select' ? (
+      {type === 'select' ? (
         <select
           name={name}
           value={value}
           onChange={onChange}
           required={required}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm !outline-none sm:text-sm"
+          className="placeholder:font-normal pr-4 border-none outline-none placeholder:text-xs lg:placeholder:text-sm placeholder:text-white text-white font-normal text-xs lg:text-sm w-full p-3 sm:p-[15.5px_16px_19px_16px] rounded-lg bg-black-olive"
         >
-          <option value="">Select {label}</option>
+          <option value="">{label}</option>
           {options.map((option) => (
             <option key={option} value={option}>
               {option}
@@ -42,8 +34,9 @@ const InputField = ({
           name={name}
           value={value}
           onChange={onChange}
+          placeholder={placeholder}
           required={required}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm !outline-none sm:text-sm"
+          className="placeholder:font-normal pr-4 border-none outline-none placeholder:text-xs lg:placeholder:text-sm placeholder:text-white text-white font-normal text-xs lg:text-sm w-full p-3 sm:p-[15.5px_16px_19px_16px] rounded-lg bg-black-olive"
         />
       )}
     </>

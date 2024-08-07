@@ -55,18 +55,6 @@ const phoneModelStorage = {
   'iphone 15 pro max': ['128GB', '256GB', '512GB', '1TB'],
 };
 
-const getCityAndState = async (pincode) => {
-  try {
-    const response = await fetch(`https://api.example.com/location/${pincode}`);
-    if (!response.ok) throw new Error('Failed to fetch location data');
-    const data = await response.json();
-    return { city: data.city, state: data.state };
-  } catch (error) {
-    console.error(error);
-    return { city: '', state: '' };
-  }
-};
-
 const EmailForm = () => {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -98,18 +86,6 @@ const EmailForm = () => {
     setFormData((prevData) => ({ ...prevData, phoneColor: '', phoneStorage: '' }));
   }, [formData.phoneModel]);
 
-  useEffect(() => {
-    if (formData.pincode.length === 6) {
-      getCityAndState(formData.pincode).then(({ city, state }) => {
-        setFormData((prevData) => ({
-          ...prevData,
-          city,
-          state,
-        }));
-      });
-    }
-  }, [formData.pincode]);
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError('');
@@ -133,7 +109,7 @@ const EmailForm = () => {
       .then(
         (result) => {
           console.log(result.text);
-          setShowModal(true); // Show the modal on success
+          setShowModal(true); 
         },
         (error) => {
           console.log(error.text);
@@ -158,64 +134,75 @@ const EmailForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4">
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className='max-w-[1440px] mx-auto px-4'>
+    <h1 className='lg:text-6xl md:text-5xl sm:text-4xl text-3xl bg-font-gradient bg-clip-text py-10 text-transparent text-center'>
+      Fill Your Detail For Book The Phone
+    </h1>
+    <div className="max-w-[600px] mx-auto">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4">
+        <div className='flex items-center flex-col sm:flex-row gap-3'>
         <InputField
           type="text"
           name="firstName"
+          placeholder="First Name"
           value={formData.firstName}
           onChange={handleChange}
-          label="First Name"
           required
         />
         <InputField
           type="text"
           name="lastName"
+          placeholder="Last Name"
           value={formData.lastName}
           onChange={handleChange}
-          label="Last Name"
           required
         />
+        </div>
+        <div className='flex items-center flex-col sm:flex-row gap-3'>
         <InputField
-          type="text"
+          type="number"
           name="pincode"
+          placeholder="Pincode"
           value={formData.pincode}
           onChange={handleChange}
-          label="Pincode"
           required
         />
         <InputField
           type="text"
           name="city"
+          placeholder="City"
           value={formData.city}
           onChange={handleChange}
-          label="City"
           required
         />
+        </div>
+        <div className='flex items-center flex-col sm:flex-row gap-3'>
         <InputField
           type="text"
           name="state"
+          placeholder="State"
           value={formData.state}
           onChange={handleChange}
-          label="State"
           required
         />
         <InputField
           type="select"
           name="phoneModel"
+          label="Select Model"
           value={formData.phoneModel}
           onChange={handleChange}
-          label="Phone Model"
           options={Object.keys(phoneModelColors)}
           required
         />
+        </div>
+        <div className='flex items-center flex-col sm:flex-row gap-3'>
         {formData.phoneModel && (
           <InputField
             type="select"
             name="phoneColor"
+            label="Select Color"
             value={formData.phoneColor}
             onChange={handleChange}
-            label="Phone Color"
             options={availableColors}
             required
           />
@@ -225,34 +212,36 @@ const EmailForm = () => {
             type="select"
             name="phoneStorage"
             value={formData.phoneStorage}
+            label="Select Storage"
             onChange={handleChange}
-            label="Phone Storage"
             options={availableStorage}
             required
           />
         )}
-        <InputField
+        </div>
+        <textarea
           type="textarea"
           name="fullAddress"
+          placeholder="Full Address"
           value={formData.fullAddress}
           onChange={handleChange}
-          label="Full Address"
           required
-        />
+          className='placeholder:font-normal pr-4 border-none outline-none placeholder:text-xs lg:placeholder:text-sm placeholder:tracking-tighter placeholder:text-white text-white font-normal text-xs lg:text-sm w-full p-3 sm:p-[15.5px_16px_19px_16px] rounded-lg resize-none h-20 bg-black-olive'
+        ></textarea>
         <InputField
-          type="text"
+          type="number"
           name="mobileNo"
+          placeholder="Mobile Number"
           value={formData.mobileNo}
           onChange={handleChange}
-          label="Mobile No"
           required
         />
         <InputField
-          type="text"
+          type="number"
           name="alternateNo"
+          placeholder="Alternate Number"
           value={formData.alternateNo}
           onChange={handleChange}
-          label="Alternate Mobile No"
           required
         />
         {error && (
@@ -263,28 +252,28 @@ const EmailForm = () => {
         <div>
           <button
             type="submit"
-            className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="duration-500 bg-malachite py-2 sm:py-3 md:py-4 px-6 w-full flex justify-center text-light-white rounded-xl font-inter border-[2px] border-malachite font-bold text-sm overflow-hidden ease-in-out text-center after:absolute relative after:left-50%  after:bg-vampire-black after:w-full after:h-full  after:left-0 after:top-0 after:scale-x-0 hover:after:scale-x-100 after:origin-center after:rounded-xl after:duration-500 after:ease-in-out hover:text-malachite"
           >
-            Submit
+        <span className="relative z-10 my-auto">Submit</span>
           </button>
         </div>
       </form>
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-30 " onClick={() => setShowModal(false)}>
+          <div className="bg-black p-6 rounded-lg shadow-lg">
             <img src={QR} alt="qr" className='w-full h-full' />
-            <p>Your message has been sent successfully!</p>
             <button
-              onClick={() => setShowModal(false)}
-              className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md"
-            >
-              Close
-            </button>
+            type="submit"
+            className="duration-500 bg-malachite p-2 mt-3 flex justify-center text-light-white rounded-md font-inter border-[2px] border-malachite font-bold text-sm overflow-hidden ease-in-out text-center after:absolute relative after:left-50%  after:bg-vampire-black after:w-full after:h-full  after:left-0 after:top-0 after:scale-x-0 hover:after:scale-x-100 after:origin-center after:rounded-[36px] after:duration-500 after:ease-in-out hover:text-malachite"
+          >
+        <span className="relative z-10 my-auto">Submit</span>
+          </button>
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

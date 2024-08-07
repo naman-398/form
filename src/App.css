@@ -1,0 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+body {
+  background-color: #000;
+  font-family: "Inter", sans-serif;
+}
+input:-webkit-autofill,
+textarea:-webkit-autofill{
+  -webkit-box-shadow: 0 0 0 100px #3b3c3d inset;
+  -webkit-text-fill-color: #fff;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
